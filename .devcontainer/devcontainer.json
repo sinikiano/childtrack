@@ -1,14 +1,9 @@
 {
   "name": "ChildTrack Development",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
-      "version": "17",
-      "installGradle": "true",
-      "gradleVersion": "8.9"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "22"
+      "version": "17"
     }
   },
   "customizations": {
@@ -16,14 +11,13 @@
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker",
-        "mathiasfrohlich.Kotlin"
+        "ms-azuretools.vscode-docker"
       ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
+          "source.fixAll.eslint": "explicit"
         }
       }
     }
@@ -35,6 +29,6 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "bash -c 'cd server && npm install'",
+  "postCreateCommand": "cd server && npm install",
   "remoteUser": "node"
 }
