@@ -40,6 +40,7 @@ jobs:
       - name: Write provisioning config
         shell: bash
         run: |
+          mkdir -p android/app/src/main/assets
           cat > android/app/src/main/assets/provision.json <<'EOF'
           {
             "server": "${{ inputs.server_url }}",
