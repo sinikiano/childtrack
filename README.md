@@ -12,7 +12,7 @@ Self-hosted, free GPS tracker for your kids' Android phone, synced to your own D
 - Low-battery and "device offline" alerts.
 - **History view** — animated route playback + per-day distance/points stats.
 - Trips view (auto-segmented routes with distance + duration) and CSV/GPX export.
-- Notification channels: ntfy, Telegram bot, SMTP email (pick any/all).
+- Notification channels: ntfy, Telegram bot (pick any/all).
 - Parent-initiated "Request location now" (polled, no Google FCM needed).
 - Child-initiated SOS button in the app.
 - Reverse geocoding via Nominatim (cached, rate-limited).

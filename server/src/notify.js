@@ -1,19 +1,8 @@
-import nodemailer from 'nodemailer';
-
 const cfg = {
   ntfy:    (process.env.NOTIFY_NTFY_URL || '').trim(),
   tgToken: (process.env.NOTIFY_TELEGRAM_BOT_TOKEN || '').trim(),
   tgChat:  (process.env.NOTIFY_TELEGRAM_CHAT_ID || '').trim(),
-  smtp:    (process.env.NOTIFY_EMAIL_SMTP || '').trim(),
-  from:    (process.env.NOTIFY_EMAIL_FROM || '').trim(),
-  to:      (process.env.NOTIFY_EMAIL_TO || '').trim(),
 };
-
-let mailer = null;
-if (cfg.smtp && cfg.from && cfg.to) {
-  try { mailer = nodemailer.createTransport(cfg.smtp); }
-  catch (e) { console.warn('[notify] SMTP init failed:', e.message); }
-}
 
 async function safe(fn, label) {
   try { await fn(); }
@@ -50,15 +39,8 @@ export async function notify({ title, message, priority = 'default', tag = 'bell
     }), 'telegram');
   }
 
-  if (mailer) {
-    await safe(() => mailer.sendMail({
-      from: cfg.from, to: cfg.to,
-      subject: `[ChildTrack] ${title}`,
-      text,
-    }), 'email');
-  }
 }
 
 export function notifyConfigured() {
-  return !!(cfg.ntfy || (cfg.tgToken && cfg.tgChat) || mailer);
+  return !!(cfg.ntfy || (cfg.tgToken && cfg.tgChat));
 }

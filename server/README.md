@@ -90,11 +90,6 @@ NOTIFY_NTFY_URL=https://ntfy.sh/childtrack-some-random-topic
 #   https://api.telegram.org/bot<TOKEN>/getUpdates )
 NOTIFY_TELEGRAM_BOT_TOKEN=123:abc
 NOTIFY_TELEGRAM_CHAT_ID=987654321
-
-# SMTP
-NOTIFY_EMAIL_SMTP=smtps://user:pass@smtp.example.com:465
-NOTIFY_EMAIL_FROM=ChildTrack <track@example.com>
-NOTIFY_EMAIL_TO=parent@example.com
 ```
 
 Restart: `sudo systemctl restart childtrack`.
