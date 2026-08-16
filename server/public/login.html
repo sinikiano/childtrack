@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>ChildTrack — Login</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div style="display:grid;place-items:center;height:100%;">
+    <form id="f" class="card" style="min-width: 280px;">
+      <h2 style="margin-top:0">ChildTrack</h2>
+      <div class="row" style="flex-direction:column;align-items:stretch;gap:10px;">
+        <input id="u" placeholder="Username" autocomplete="username" />
+        <input id="p" type="password" placeholder="Password" autocomplete="current-password" />
+        <input id="c" type="text" inputmode="numeric" placeholder="2FA code (if enabled)" autocomplete="one-time-code" style="display:none" />
+        <button class="primary" type="submit">Sign in</button>
+        <div id="err" style="color:#fca5a5;font-size:13px;"></div>
+      </div>
+    </form>
+  </div>
+  <script src="/login.js"></script>
+  <script src="/register-sw.js"></script>
+</body>
+</html>

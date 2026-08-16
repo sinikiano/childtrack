@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>ChildTrack</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="brand">ChildTrack</span>
+    <nav>
+      <button data-view="live"   class="active">Live</button>
+      <button data-view="history">History</button>
+      <button data-view="trips">Trips</button>
+      <button data-view="zones">Zones</button>
+      <button data-view="schedules">Schedules</button>
+      <button data-view="alerts">Alerts</button>
+      <button data-view="shares">Share</button>
+      <button data-view="settings">Devices</button>
+      <button data-view="users" id="navUsers" style="display:none">Users</button>
+    </nav>
+    <div class="right">
+      <span id="who" class="pill">—</span>
+      <button id="logout">Logout</button>
+    </div>
+  </header>
+
+  <!-- LIVE -->
+  <section id="view-live" class="view map active" style="position:relative">
+    <div class="toolbar map-over">
+      <label>Device <select id="liveDevice"></select></label>
+      <label>Since
+        <select id="liveSince">
+          <option value="3600000">1 h</option>
+          <option value="21600000">6 h</option>
+          <option value="86400000" selected>24 h</option>
+          <option value="604800000">7 d</option>
+          <option value="0">All</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="heat" /> Heatmap</label>
+      <label><input type="checkbox" id="auto" checked /> Auto 15s</label>
+      <button id="locateNow">Request location now</button>
+      <span id="liveStatus" class="pill">—</span>
+    </div>
+    <div id="map" class="map-wrap"></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="view-history" class="view">
+    <div class="card row">
+      <label>Device <select id="histDevice"></select></label>
+      <label>From <input type="date" id="histFrom" /></label>
+      <label>To   <input type="date" id="histTo" /></label>
+      <button class="primary" id="histLoad">Load</button>
+      <button id="histPlay">Play</button>
+    </div>
+    <div class="card row" id="histStats">
+      <span class="pill" id="histDist">—</span>
+      <span class="pill" id="histActive">—</span>
+      <span class="pill" id="histPoints">—</span>
+    </div>
+    <div class="card"><div id="histMap" style="height:50vh;"></div></div>
+  </section>
+
+  <!-- TRIPS -->
+  <section id="view-trips" class="view">
+    <div class="card row">
+      <label>Device <select id="tripDevice"></select></label>
+      <label>From <input type="date" id="tripFrom" /></label>
+      <label>To   <input type="date" id="tripTo" /></label>
+      <button class="primary" id="tripLoad">Load</button>
+      <a id="csvLink" href="#" target="_blank">CSV</a>
+      <a id="gpxLink" href="#" target="_blank">GPX</a>
+    </div>
+    <div class="card"><div id="tripMap" style="height:50vh;"></div></div>
+    <div class="card"><table id="tripTbl"><thead>
+      <tr><th>Start</th><th>End</th><th>Distance</th><th>Duration</th><th>From</th><th>To</th></tr>
+    </thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- ZONES -->
+  <section id="view-zones" class="view" style="height:100%;display:none;">
+    <div class="toolbar">
+      <label>Apply to <select id="zoneDevice"><option value="*">All devices</option></select></label>
+      <span class="pill">Draw a circle or polygon on the map, then name &amp; save.</span>
+      <button id="zonesRefresh">Refresh list</button>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;height:calc(100% - 50px);">
+      <div id="zonesMap"></div>
+      <div style="overflow:auto;padding:8px;">
+        <table id="zonesTbl"><thead>
+          <tr><th>Name</th><th>Device</th><th>Kind</th><th>Enter</th><th>Leave</th><th>Dwell (min)</th><th></th></tr>
+        </thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULES -->
+  <section id="view-schedules" class="view">
+    <div class="card row">
+      <label>Device <select id="schedDevice"></select></label>
+      <label>Day
+        <select id="schedDay">
+          <option value="-1">Every day</option>
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </label>
+      <label>From <input type="time" id="schedStart" value="16:00" /></label>
+      <label>To   <input type="time" id="schedEnd" value="18:00" /></label>
+      <label>Zone <select id="schedZone"><option value="">Any (just be online)</option></select></label>
+      <input id="schedMsg" placeholder="Message (optional)" style="min-width:180px" />
+      <button class="primary" id="schedAdd">Add schedule</button>
+    </div>
+    <div class="card"><table id="schedTbl"><thead>
+      <tr><th>Device</th><th>Day</th><th>Window</th><th>Zone</th><th>Message</th><th></th></tr>
+    </thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- ALERTS -->
+  <section id="view-alerts" class="view">
+    <div class="card row">
+      <button id="alertsRefresh">Refresh</button>
+      <span id="notifyState" class="pill">—</span>
+    </div>
+    <div class="card"><table id="alertsTbl"><thead>
+      <tr><th>When</th><th>Device</th><th>Kind</th><th>Message</th></tr>
+    </thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- SHARES -->
+  <section id="view-shares" class="view">
+    <div class="card row">
+      <label>Device <select id="shareDevice"></select></label>
+      <label>Valid for
+        <select id="shareHours">
+          <option value="1">1 hour</option>
+          <option value="24" selected>24 hours</option>
+          <option value="168">7 days</option>
+        </select>
+      </label>
+      <button class="primary" id="shareCreate">Create link</button>
+    </div>
+    <div class="card"><table id="sharesTbl"><thead>
+      <tr><th>Device</th><th>URL</th><th>Expires</th><th>By</th><th></th></tr>
+    </thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- SETTINGS / DEVICES -->
+  <section id="view-settings" class="view">
+    <div class="card"><h3 style="margin-top:0">Devices</h3><table id="metaTbl"><thead>
+      <tr><th>Device</th><th>Last seen</th><th>Battery</th><th>Speed limit (km/h)</th><th>Offline after (s)</th><th>Low batt %</th><th></th><th></th></tr>
+    </thead><tbody></tbody></table>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:0">
+      "Setup QR" shows a code the ChildTrack app scans to configure itself (server + token) — no typing needed.
+      Built APKs from the auto-build pipeline are pre-configured for you.
+    </p></div>
+    <div class="card">
+      <h3 style="margin-top:0">Account</h3>
+      <div class="row">
+        <input id="oldPass" type="password" placeholder="Current password" />
+        <input id="newPass" type="password" placeholder="New password (min 8 chars)" />
+        <button class="primary" id="passChange">Change password</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="btn2fa">Enable 2FA</button>
+        <span class="pill" id="totpState">—</span>
+      </div>
+      <div id="totpBox" style="display:none;margin-top:10px">
+        <img id="totpQr" alt="Scan this QR with Google Authenticator / Aegis" style="width:180px;height:180px;background:#fff;padding:6px;border-radius:8px" />
+        <div class="row">
+          <input id="totpCode" inputmode="numeric" placeholder="6-digit code" />
+          <button class="primary" id="totpConfirm">Verify & enable</button>
+          <button class="danger" id="totpDisable" style="display:none">Disable 2FA</button>
+        </div>
+      </div>
+      <h3 style="margin-top:16px">Active sessions</h3>
+      <div class="table-wrap"><table id="sessTbl"><thead>
+        <tr><th>Token</th><th>Created</th><th>Expires</th><th></th></tr>
+      </thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- USERS (admin) -->
+  <section id="view-users" class="view">
+    <div class="card row">
+      <input id="newUser" placeholder="username" />
+      <input id="newPassUser" type="password" placeholder="password" />
+      <select id="newRole"><option value="parent">parent</option><option value="admin">admin</option></select>
+      <button class="primary" id="userAdd">Add user</button>
+    </div>
+    <div class="card"><table id="usersTbl"><thead>
+      <tr><th>ID</th><th>Username</th><th>Role</th><th>Created</th><th></th></tr>
+    </thead><tbody></tbody></table></div>
+  </section>
+</div>
+
+<!-- Provisioning QR modal -->
+<div id="provModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;place-items:center">
+  <div class="card" style="max-width:380px;text-align:center;padding:24px">
+    <h3 style="margin-top:0">Install on the child's phone</h3>
+    <img id="provQr" alt="Scan with the ChildTrack app" style="width:230px;height:230px;background:#fff;padding:8px;border-radius:8px" />
+    <p style="font-size:12px;color:var(--mut);word-break:break-all" id="provPayload"></p>
+    <p style="font-size:12px;color:var(--mut)">In the app tap <b>Scan QR</b>, then <b>Start tracking</b>.</p>
+    <button class="primary" id="provClose">Close</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="/app.js"></script>
+<script src="/register-sw.js"></script>
+</body>
+</html>

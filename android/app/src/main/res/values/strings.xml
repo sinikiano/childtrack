@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">ChildTrack</string>
+    <string name="notif_title">ChildTrack is on</string>
+    <string name="notif_text">Sharing location with parent</string>
+    <string name="notif_channel">Location</string>
+    <string name="notif_no_upload">No upload yet</string>
+    <string name="notif_last_upload">Last upload %1$s</string>
+    <string name="notif_failing">Upload failing (%1$s)</string>
+    <string name="notif_queued">%1$d queued</string>
+
+    <string name="hint_server">https://track.example.com</string>
+    <string name="hint_token">Device token</string>
+    <string name="hint_interval">Interval (seconds, default 60)</string>
+    <string name="hint_pin">Lock PIN (optional, 4–6 digits, protects Stop)</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_sos">SOS — call parent</string>
+    <string name="btn_scan">Scan setup QR from parent\'s panel</string>
+    <string name="scan_prompt">Point the camera at the Setup QR code in the parent\'s admin panel (Devices → Setup QR)</string>
+    <string name="status_scan_bad">QR not recognized — scan the Setup QR from the panel</string>
+    <string name="status_provisioned">Configured from QR — press Start</string>
+
+    <string name="status_idle">Idle</string>
+    <string name="status_running">Running</string>
+    <string name="status_stopped">Stopped</string>
+    <string name="status_sos_sent">SOS sent</string>
+    <string name="status_perms_denied">Permissions denied</string>
+    <string name="status_bad_url">Server URL must start with https://</string>
+    <string name="status_no_token">Token required</string>
+    <string name="status_bad_pin">PIN must be 4–6 digits</string>
+    <string name="status_wrong_pin">Wrong PIN</string>
+    <string name="status_need_config">Configure server &amp; token first</string>
+
+    <string name="pin_title">Enter lock PIN</string>
+    <string name="pin_hint">PIN</string>
+    <string name="pin_ok">OK</string>
+
+    <string name="sos_title">Send SOS to parent?</string>
+    <string name="sos_note_hint">Optional note (e.g. \'help, lost\')</string>
+    <string name="sos_send">Send</string>
+
+    <string name="transparency_text">How this app works\n\n• Your location is sent to your parent\'s private server every few minutes\n• The parent can request your location at any time and see your history\n• SOS sends your position and note to your parent immediately\n• This stays visible: the notification and app icon are always shown</string>
+</resources>

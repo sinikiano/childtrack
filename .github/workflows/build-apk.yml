@@ -1,0 +1,64 @@
+name: Build pre-configured APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_url:
+        description: 'ChildTrack server URL (e.g. https://track.example.com)'
+        required: true
+        type: string
+      device_token:
+        description: 'Device token (the value after ":" in the DEVICES env var)'
+        required: true
+        type: string
+      device_name:
+        description: 'Device name (optional, for reference)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Write provisioning config
+        shell: bash
+        run: |
+          cat > android/app/src/main/assets/provision.json <<'EOF'
+          {
+            "server": "${{ inputs.server_url }}",
+            "token": "${{ inputs.device_token }}",
+            "device": "${{ inputs.device_name }}"
+          }
+          EOF
+
+      - name: Run unit tests
+        working-directory: android
+        run: ./gradlew testDebugUnitTest
+
+      - name: Build release APK
+        working-directory: android
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: childtrack-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 14

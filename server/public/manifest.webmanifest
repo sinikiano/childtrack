@@ -1,0 +1,23 @@
+{
+  "name": "ChildTrack",
+  "short_name": "ChildTrack",
+  "description": "Parent dashboard for the ChildTrack GPS tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%231976d2'/%3E%3Ccircle cx='96' cy='96' r='24' fill='white'/%3E%3Ccircle cx='96' cy='96' r='44' fill='none' stroke='white' stroke-width='10'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%231976d2'/%3E%3Ccircle cx='256' cy='256' r='64' fill='white'/%3E%3Ccircle cx='256' cy='256' r='120' fill='none' stroke='white' stroke-width='28'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
